@@ -2,6 +2,7 @@
 #include <random>
 #include <set>
 #include <algorithm>
+#include "linked_list.cpp"
 
 #define RANGE_FROM 0
 #define RANGE_TO 65535
@@ -9,7 +10,11 @@
 
 using namespace std;
 
-void configure(vector<unsigned short> *numbers) {
+/**
+ * Configures the required numbers for the performance test
+ * @param numbers The vector to which the random numbers will be copied
+ */
+void configure_elements(vector<unsigned short> *numbers) {
     set<unsigned short> set;
 
     random_device rand_device;
@@ -24,19 +29,21 @@ void configure(vector<unsigned short> *numbers) {
 
     cout << "Copying to a vector" << endl;
     copy(set.begin(), set.end(), numbers->begin());
-
-    default_random_engine random_engine;
-    cout << "Shuffling numbers in the vector" << endl;
-    shuffle(numbers->begin(), numbers->end(), random_engine);
 }
-
 
 int main() {
     vector<unsigned short> numbers(N);
     cout << "Starting configuration" << endl;
-    configure(&numbers);
+    configure_elements(&numbers);
 
+    default_random_engine random_engine;
+    cout << "Shuffling numbers in the vector" << endl;
+    shuffle(numbers.begin(), numbers.end(), random_engine);
+
+    cout << "Populating Linked List" << endl;
+    linked_list list;
     for (unsigned short i : numbers) {
-        cout << i << " ";
+        cout << "Adding " << i << endl;
+        list.insert(i);
     }
 }
