@@ -4,38 +4,39 @@
  * Struct to represent a list node
  */
 struct list_node {
-    long value;
+    unsigned short value;
     struct list_node *next;
 };
 
 /**
  * Linked list class
  */
-class serial_linked_list {
+class linked_list {
 
-public:
+private:
     struct list_node *head;
 
-    serial_linked_list() {
+public:
+    linked_list() {
         head = NULL;
     }
 
-    ~serial_linked_list() {
+    ~linked_list() {
         head = NULL;
     }
 
-    void insert(long value);
+    void insert(unsigned short value);
 
-    int member(long value);
+    int member(unsigned short value);
 
-    int remove(long value);
+    int remove(unsigned short value);
 };
 
 /**
  * Insert function will add the given element to the head of the list.
  * @param value the value to be added to the list
  */
-void serial_linked_list::insert(long value) {
+void linked_list::insert(unsigned short value) {
     struct list_node *new_element = new list_node;
     new_element->value = value;
     new_element->next = head;
@@ -48,7 +49,7 @@ void serial_linked_list::insert(long value) {
  * @param value the value to be searched for membership
  * @return 1 if a member | 0 otherwise
  */
-int serial_linked_list::member(long value) {
+int linked_list::member(unsigned short value) {
     struct list_node *current_node = head;
     while (current_node != NULL) {
         if (current_node->value == value) {
@@ -64,7 +65,7 @@ int serial_linked_list::member(long value) {
  * @param value the value to be removed
  * @return 1 if found and deleted | 0 otherwise
  */
-int serial_linked_list::remove(long value) {
+int linked_list::remove(unsigned short value) {
     struct list_node *current_node = head;
     struct list_node *previous_node = NULL;
 
