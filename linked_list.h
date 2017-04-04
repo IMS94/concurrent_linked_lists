@@ -1,3 +1,6 @@
+#ifndef LAB_2_LINKED_LIST_H
+#define LAB_2_LINKED_LIST_H
+
 #include<iostream>
 
 /**
@@ -22,7 +25,12 @@ public:
     }
 
     ~linked_list() {
-        head = NULL;
+        list_node *node = head;
+        while (node != NULL) {
+            list_node *old = node;
+            node = node->next;
+            delete (old);
+        }
     }
 
     /**
@@ -79,3 +87,6 @@ public:
         return 0;
     }
 };
+
+
+#endif //LAB_2_LINKED_LIST_H
