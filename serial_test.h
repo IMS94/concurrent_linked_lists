@@ -11,14 +11,14 @@ class serial_test : public test {
 
 private:
     unsigned short *random_nums;
-    int random_num_count = 100;
+    int random_num_count;
 
 protected:
     void run() {
         int op_count = 0;
 
-        cout << "Execution plan got " << execution_plan->size() << " elements" << endl;
-        for (Op operation: *execution_plan) {
+        cout << "Execution plan got " << execution_plan.size() << " elements" << endl;
+        for (Op operation: execution_plan) {
             switch (operation) {
                 case MEMBER:
                     list->member(random_nums[op_count % random_num_count]);
@@ -46,11 +46,12 @@ protected:
         for (int i = 0; i < insert_ops; i++) {
             random_nums[i] = distribution(generator);
         }
+        cout << "Generated random numbers" << endl;
     }
 
     void teardown_test() {
         test::teardown_test();
-        delete (random_nums);
+        delete[] random_nums;
     }
 
 public:
@@ -58,10 +59,10 @@ public:
                 unsigned short iterations,
                 float member_percentage,
                 float insert_percentage,
-                float delete_percentage,
-                unsigned short thread_count) : test(n, m, iterations, member_percentage,
-                                                    insert_percentage, delete_percentage) {
+                float delete_percentage) : test(n, m, iterations, member_percentage,
+                                                insert_percentage, delete_percentage) {
         cout << "Creating a serial test" << endl;
+        random_num_count = insert_ops > 100 ? insert_ops : 100;
     }
 };
 

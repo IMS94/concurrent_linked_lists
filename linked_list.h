@@ -24,14 +24,7 @@ public:
         head = NULL;
     }
 
-    ~linked_list() {
-        list_node *node = head;
-        while (node != NULL) {
-            list_node *old = node;
-            node = node->next;
-            delete (old);
-        }
-    }
+    ~linked_list() {}
 
     /**
     * Insert function will add the given element to the head of the list.

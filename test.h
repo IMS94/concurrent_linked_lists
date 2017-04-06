@@ -69,7 +69,7 @@ private:
 
 protected:
     linked_list *list;
-    vector<Op> *execution_plan;
+    vector<Op> execution_plan;
     default_random_engine random_engine;
     int insert_ops;
     int delete_ops;
@@ -82,7 +82,8 @@ protected:
         configure_elements();
 
         cout << "Shuffling the execution plan" << endl;
-        shuffle(execution_plan->begin(), execution_plan->end(), random_engine);
+        shuffle(execution_plan.begin(), execution_plan.end(), random_engine);
+        cout << "Execution plan shuffled successfully" << endl;
     }
 
     /**
@@ -90,12 +91,13 @@ protected:
      */
     virtual void teardown_test() {
         delete (list);
+        execution_plan.clear();
     };
 
     virtual void run()= 0;
 
 public:
-    test(int n, int m, unsigned short iter, float member_percentage,
+    test(int n, unsigned int m, unsigned short iter, float member_percentage,
          float insert_percentage, float delete_percentage) {
 
         iterations = iter;
@@ -117,11 +119,7 @@ public:
             ops[i] = DELETE;
         }
 
-        execution_plan = new vector<Op>(ops, ops + sizeof(ops) / sizeof(ops[0]));
-    }
-
-    ~test() {
-        delete (execution_plan);
+        copy(&ops[0], &ops[m], back_inserter(execution_plan));
     }
 
     /**
@@ -129,11 +127,13 @@ public:
      */
     void run_test() {
         for (int i = 0; i < iterations; i++) {
-            cout << "\n\nRunning " << i << "th test iteration" << endl;
+            cout << "\nRunning " << i << "th test iteration" << endl;
             setup_test();
+            cout << "Test setup successful" << endl;
+
             const clock_t start = clock();
             run();
-            cout << "Test took " << float(clock() - start) << " to execute" << endl;
+            cout << "Test took " << float(clock() - start) / CLOCKS_PER_SEC << " seconds to execute\n\n" << endl;
             teardown_test();
         }
     }
