@@ -125,17 +125,25 @@ public:
     /**
      * This method has to be called in order to run the actual test.
      */
-    void run_test() {
+    vector<float> run_test() {
+        vector<float> execution_times;
+
         for (int i = 0; i < iterations; i++) {
             cout << "\nRunning " << i << "th test iteration" << endl;
             setup_test();
             cout << "Test setup successful" << endl;
 
             const clock_t start = clock();
+
             run();
-            cout << "Test took " << float(clock() - start) / CLOCKS_PER_SEC << " seconds to execute\n\n" << endl;
+
+            float elapsed_time = float(clock() - start) / CLOCKS_PER_SEC;
+            execution_times.push_back(elapsed_time);
+            cout << "Test took " << elapsed_time << " seconds to execute\n\n" << endl;
+
             teardown_test();
         }
+        return execution_times;
     }
 };
 

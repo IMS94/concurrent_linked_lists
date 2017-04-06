@@ -8,17 +8,29 @@ using namespace std;
 int main(int argc, char **argv) {
     cout << "Running the serial test" << endl;
     serial_test test(1000, 10000, 1, 0.8, 0.1, 0.1);
-    test.run_test();
+    vector<float> serial_results = test.run_test();
+
+    for (float a:serial_results) {
+        cout << a << " ";
+    }
 
     cout << "\n\n\n" << endl;
 
     cout << "Running the mutex test" << endl;
     mutex_test mutex_test(1000, 10000, 1, 0.8, 0.1, 0.1, 4);
-    mutex_test.run_test();
+    vector<float> mutex_results = mutex_test.run_test();
+
+    for (float a:mutex_results) {
+        cout << a << " ";
+    }
 
     cout << "\n\n\n" << endl;
 
     cout << "Running the read write lock test" << endl;
     rw_lock_test rw_lock_test(1000, 10000, 1, 0.8, 0.1, 0.1, 4);
-    rw_lock_test.run_test();
+    vector<float> rw_lock_results = rw_lock_test.run_test();
+
+    for (float a:rw_lock_results) {
+        cout << a << " ";
+    }
 }
