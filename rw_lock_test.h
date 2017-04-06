@@ -1,5 +1,5 @@
-#ifndef LAB_2_MUTEX_TEST_H
-#define LAB_2_MUTEX_TEST_H
+#ifndef LAB_2_RW_LOCK_TEST_H
+#define LAB_2_RW_LOCK_TEST_H
 
 #include "test.h"
 #include <pthread.h>
@@ -8,7 +8,7 @@
 /**
  * Struct to be used to pass data to the thread functions.
  */
-struct mutex_thread_context {
+struct rw_lock_thread_context {
     int thread_count;
     int per_thread_op_count;
     unsigned short *random_nums;
@@ -16,16 +16,16 @@ struct mutex_thread_context {
     int start_index;
     vector<Op> *execution_plan;
     linked_list *list;
-    pthread_mutex_t *mutex;
+    pthread_rwlock_t *rw_lock;
 };
 
 /**
  * Test to test the performance of the Linked List with one mutex as the lock
  */
-class mutex_test : public test {
+class rw_lock_test : public test {
 
 private:
-    pthread_mutex_t mutex;
+    pthread_rwlock_t rw_lock;
     int thread_count;
     int per_thread_op_count;
     pthread_t *threads;
@@ -37,7 +37,7 @@ private:
      * Function to be called by pthreads.
      */
     static void *thread_func(void *c) {
-        mutex_thread_context *cntx = (mutex_thread_context *) c;
+        rw_lock_thread_context *cntx = (rw_lock_thread_context *) c;
         int start_index = cntx->start_index;
         int end_index = start_index + cntx->per_thread_op_count;
 
@@ -46,19 +46,19 @@ private:
         for (int i = start_index; i < end_index; i++) {
             switch ((*cntx->execution_plan)[i]) {
                 case MEMBER:
-                    pthread_mutex_lock(cntx->mutex);
+                    pthread_rwlock_rdlock(cntx->rw_lock);
                     cntx->list->member(cntx->random_nums[op_count % cntx->random_num_count]);
-                    pthread_mutex_unlock(cntx->mutex);
+                    pthread_rwlock_unlock(cntx->rw_lock);
                     break;
                 case DELETE:
-                    pthread_mutex_lock(cntx->mutex);
+                    pthread_rwlock_wrlock(cntx->rw_lock);
                     cntx->list->remove(cntx->random_nums[op_count % cntx->random_num_count]);
-                    pthread_mutex_unlock(cntx->mutex);
+                    pthread_rwlock_unlock(cntx->rw_lock);
                     break;
                 case INSERT:
-                    pthread_mutex_lock(cntx->mutex);
+                    pthread_rwlock_wrlock(cntx->rw_lock);
                     cntx->list->insert(cntx->random_nums[op_count % cntx->random_num_count]);
-                    pthread_mutex_unlock(cntx->mutex);
+                    pthread_rwlock_unlock(cntx->rw_lock);
                     break;
             }
             op_count++;
@@ -77,7 +77,7 @@ protected:
         for (int i = 0; i < thread_count; i++) {
             int start_index = per_thread_op_count * i;
 
-            mutex_thread_context *c = new mutex_thread_context;
+            rw_lock_thread_context *c = new rw_lock_thread_context;
             c->random_num_count = random_num_count;
             c->per_thread_op_count = per_thread_op_count;
             c->thread_count = thread_count;
@@ -85,7 +85,7 @@ protected:
             c->start_index = start_index;
             c->execution_plan = &execution_plan;
             c->list = list;
-            c->mutex = &mutex;
+            c->rw_lock = &rw_lock;
 
             pthread_create(&(threads[i]), &pthread_attr, thread_func, (void *) c);
         }
@@ -118,24 +118,24 @@ protected:
         }
 
         threads = new pthread_t[thread_count];
-        pthread_mutex_init(&mutex, NULL);
+        pthread_rwlock_init(&rw_lock, NULL);
     }
 
     void teardown_test() {
         test::teardown_test();
         delete (random_nums);
         delete (threads);
-        pthread_mutex_destroy(&mutex);
+        pthread_rwlock_destroy(&rw_lock);
     }
 
 public:
-    mutex_test(int n, int m, unsigned short iter, float member_percentage, float insert_percentage,
-               float delete_percentage, int thread_count) : test(n, m, iter, member_percentage, insert_percentage,
-                                                                 delete_percentage) {
+    rw_lock_test(int n, int m, unsigned short iter, float member_percentage, float insert_percentage,
+                 float delete_percentage, int thread_count) : test(n, m, iter, member_percentage, insert_percentage,
+                                                                   delete_percentage) {
 
         this->thread_count = thread_count;
         per_thread_op_count = m / thread_count;
-        cout << "Creating mutex test" << endl;
+        cout << "Creating read write lock test" << endl;
 
         random_num_count = insert_ops > 100 ? insert_ops : 100;
 
@@ -146,4 +146,4 @@ public:
 
 };
 
-#endif //LAB_2_MUTEX_TEST_H
+#endif //LAB_2_RW_LOCK_TEST_H
