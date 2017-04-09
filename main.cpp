@@ -33,4 +33,16 @@ int main(int argc, char **argv) {
     for (float a:rw_lock_results) {
         cout << a << " ";
     }
+	
+	//For calculate mean,std and sample size 
+	cout << "\n\n" << endl;
+    double sum = std::accumulate(mutex_results.begin(), mutex_results.end(), 0.0);
+    double mean = sum / mutex_results.size();
+
+    double sq_sum = std::inner_product(mutex_results.begin(), mutex_results.end(), mutex_results.begin(), 0.0);
+    double stdev = std::sqrt(sq_sum / mutex_results.size() - mean * mean);
+    double n= std::pow(((100*1.96*stdev)/(5*mean)),2);
+    cout <<" Mutex mean : "<< mean*1000 << endl;
+    cout <<"std : "<< stdev*1000 << endl;
+    cout << "n : " << n <<endl;
 }
